@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 import os
+import pandas as pd
 from groq import Groq
 
 # Securely retrieve the API key from Streamlit Secrets
@@ -77,6 +78,7 @@ def generate_schedule(user_input: str, api_key: str):
     
     response = client.chat.completions.create(
         model="llama3-8b-8192",  # Using Groq's lightning-fast Llama 3 8B model
+        response_format={"type": "json_object"},
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user",   "content": user_input}
@@ -144,6 +146,17 @@ if st.button("Generate Schedule", type="primary"):
                 with st.expander(f"**[{p}]** {task} - {est} min"):
                     st.markdown(f"**Category:** :{color}[{cat}]")
                     st.markdown(f"**Why:** {why}")
+            
+            # CSV Download Button
+            st.divider()
+            df = pd.DataFrame(schedule)
+            csv = df.to_csv(index=False).encode('utf-8')
+            st.download_button(
+                label="📥 Download Schedule as CSV",
+                data=csv,
+                file_name='daily_schedule.csv',
+                mime='text/csv',
+            )
                     
         except json.JSONDecodeError:
             st.error("Error: Agent did not return valid JSON. Raw output:")
