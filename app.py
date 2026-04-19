@@ -77,7 +77,7 @@ def generate_schedule(user_input: str, api_key: str):
     client = Groq(api_key=api_key)
     
     response = client.chat.completions.create(
-        model="llama3-8b-8192",  # Using Groq's lightning-fast Llama 3 8B model
+        model="llama-3.1-8b-instant",  # Using Groq's latest Llama 3.1 8B model
         response_format={"type": "json_object"},
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
